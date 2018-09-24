@@ -1,0 +1,40 @@
+version: '2'
+services:
+  php:
+    build:
+      context: .
+      dockerfile: build/Dockerfile
+    container_name: slim.php
+    volumes:
+      - .:/var/www/html
+    ports:
+      - 8080:80
+    links:
+      - mysql
+  mysql:
+    image: mysql:5.7
+    container_name: slim.mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1
+      MYSQL_DATABASE: slim
+      MYSQL_USER: slimUser
+      MYSQL_PASSWORD: 1
+    ports:
+      - 3307:3306
+  adminer:
+    build:
+      dockerfile: build/adminer/Dockerfile
+      context: .
+    container_name: slim.adminer
+    environment:
+      DB_HOST: mysql
+      DB_USER: slimUser
+      DB_PASS: 1
+    volumes:
+      - ./build/adminer/index.php:/var/www/html/index.php:ro
+    ports:
+      - 3308:80
+    links:
+      - mysql
+    logging:
+      driver: none

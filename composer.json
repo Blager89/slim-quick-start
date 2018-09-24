@@ -1,0 +1,19 @@
+{
+  "name": "root/slim",
+  "authors": [
+    {
+      "name": "sashanevirkovets",
+      "email": "sashanevirkovets@gmail.com"
+    }
+  ],
+  "require": {
+    "slim/slim": "^3.0",
+    "slim/twig-view": "^2.4",
+    "illuminate/database": "~5.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app"
+    }
+  }
+}
