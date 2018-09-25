@@ -5,24 +5,16 @@
          <div class="col-md-6 offset-md-3">
              <div class="card w-100">
                  <div class="card-header">
-                     sign up
+                     sign in
                  </div>
                  <div class="card-body">
-                     <form action="{{ path_for('auth.signup') }}" method="post">
+                     <form action="{{ path_for('auth.signin') }}" method="post">
                          <div class="form-group ">
                              <label for="email">Email</label>
                              <input type="email" name="email" id="email" placeholder="example@gmail.com" value="{{ old.email }}"
                                     class="form-control {{ errors.email ? 'is-invalid' : '' }}">
                              {% if errors.email %}
                              <span class="help-block text-danger">{{ errors.email |first }}</span>
-                             {% endif %}
-                         </div>
-                         <div class="form-group">
-                             <label for="name">Name</label>
-                             <input type="text" name="name" id="name" placeholder="write name"  value="{{ old.name }}"
-                                    class="form-control {{ errors.name ? 'is-invalid' : '' }}">
-                              {% if errors.name %}
-                             <span class="help-block text-danger">{{ errors.name |first }}</span>
                              {% endif %}
                          </div>
                          <div class="form-group">
@@ -33,7 +25,7 @@
                              <span class="help-block text-danger">{{ errors.password |first }}</span>
                              {% endif %}
                          </div>
-                         <button type="submit" class="btn btn-default">Sign up</button>
+                         <button type="submit" class="btn btn-default">Sign in</button>
 
                          {{ csrf.field | raw}}
 

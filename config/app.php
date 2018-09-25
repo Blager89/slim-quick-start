@@ -1,5 +1,7 @@
 <?php
+
 use Respect\Validation\Validator as validatate;
+
 session_start();
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -21,6 +23,7 @@ $app = new \Slim\App([
     ]
 ]);
 
+
 $container = $app->getContainer();
 
 //database
@@ -39,6 +42,17 @@ $container['validator'] = function ($container) {
     return new App\Validation\Validator;
 };
 
+//auth
+$container['auth'] = function ($container) {
+    return new App\Auth\Auth;
+};
+
+//flash messages
+$container['flash'] = function ($container) {
+    return new Slim\Flash\Messages;
+
+};
+
 //views template
 $container['view'] = function ($container) {
     $view = new Slim\Views\Twig(__DIR__ . '/../resources/views', [
@@ -49,6 +63,16 @@ $container['view'] = function ($container) {
         $container->request->getUri()
 
     ));
+//auth
+    $view->getEnvironment()->addGlobal('auth', [
+        'check' => $container->auth->check(),
+        'user' => $container->auth->user(),
+
+    ]);
+
+//flash
+    $view->getEnvironment()->addGlobal('flash', $container->flash);
+
     return $view;
 };
 
@@ -62,17 +86,23 @@ $container['AuthController'] = function ($container) {
     return new \App\Controllers\Auth\AuthController($container);
 };
 
+//csrf
+$container['csrf'] = function ($container) {
+    return new Slim\Csrf\Guard;
+};
+
 
 //midleware
 $app->add(new \App\Middleware\ValidationErrorsMiddleware($container));
 $app->add(new \App\Middleware\OldInputMiddleware($container));
+$app->add(new \App\Middleware\CsrfViewMiddleware($container));
+
+//csrf add
+$app->add($container->csrf);
+
 
 //custom validate
 validatate::with('App\\Validation\\Rules\\');
-
-
-
-
 
 
 require __DIR__ . '/../app/routes.php';
