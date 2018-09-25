@@ -1,4 +1,6 @@
 <?php
+use Respect\Validation\Validator as validatate;
+session_start();
 require __DIR__ . '/../vendor/autoload.php';
 
 
@@ -27,8 +29,14 @@ $capsule = new \Illuminate\Database\Capsule\Manager;
 $capsule->addConnection($container['settings']['db']);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
-$container['db'] = function ($container) use($capsule){
+$container['db'] = function ($container) use ($capsule) {
     return $capsule;
+};
+
+
+//Validator
+$container['validator'] = function ($container) {
+    return new App\Validation\Validator;
 };
 
 //views template
@@ -41,14 +49,30 @@ $container['view'] = function ($container) {
         $container->request->getUri()
 
     ));
-
     return $view;
 };
 
 //controllers
+//home controller
 $container['HomeController'] = function ($container) {
     return new \App\Controllers\HomeController($container);
 };
+//auth controller
+$container['AuthController'] = function ($container) {
+    return new \App\Controllers\Auth\AuthController($container);
+};
+
+
+//midleware
+$app->add(new \App\Middleware\ValidationErrorsMiddleware($container));
+$app->add(new \App\Middleware\OldInputMiddleware($container));
+
+//custom validate
+validatate::with('App\\Validation\\Rules\\');
+
+
+
+
 
 
 require __DIR__ . '/../app/routes.php';
